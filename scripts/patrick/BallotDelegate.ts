@@ -1,17 +1,13 @@
 import { getContract } from "./BallotDeploy";
 
 async function delegate(contract: any) {
-  console.log("Giving right to vote");
-  const giveRightTOVoteTx = await contract.giveRightToVote(
-    process.env.DELEGATE_ADDRESS
-  );
-  const giveRightToVoteTxReceipt = await giveRightTOVoteTx.wait();
+  console.log("Delegate vote");
+  const delegateTx = await contract.delegate(process.env.DELEGATE_ADDRESS);
+  const delegateTxReceipt = await delegateTx.wait();
 
-  const voterStructForAccount1 = await contract.voters(
-    process.env.DELEGATE_ADDRESS
-  );
-  console.log({ giveRightToVoteTxReceipt });
-  console.log({ voterStructForAccount1 });
+  const delegatedVoter = await contract.voters(process.env.DELEGATE_ADDRESS);
+  console.log({ delegateTxReceipt });
+  console.log({ delegatedVoter });
 }
 
 async function main() {
