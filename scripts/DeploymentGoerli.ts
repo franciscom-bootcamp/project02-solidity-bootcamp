@@ -17,7 +17,7 @@ function convertStringArrayToBytes32(array: string[]) {
 async function main() {
   const provider = ethers.getDefaultProvider("goerli");
 
-  const signer = new ethers.Wallet(process.env.PRIVATE_KEY_1, provider);
+  const signer = new ethers.Wallet(process.env.PRIVATE_KEY_1 ?? "", provider);
 
   const balanceBN = await signer.getBalance();
   const balance = Number(ethers.utils.formatEther(balanceBN));
@@ -41,6 +41,17 @@ async function main() {
   await ballotContract.deployed();
 
   console.log(`Ballot deployed to ${ballotContract.address} on Goerli`);
+
+  let voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
+  console.log({voterStructForAccount1});
+
+  console.log("Giving right to vote to address");
+  const giveRightToVoteTx = await ballotContract.giveRightToVote(process.env.VOTER_ADDRESS ?? "");
+  const giveRightToVoteTxReceipt = await giveRightToVoteTx.wait()
+  console.log({giveRightToVoteTxReceipt});
+
+  voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
+  console.log({voterStructForAccount1});
 }
 
 main().catch((error) => {
