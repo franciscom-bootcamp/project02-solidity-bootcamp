@@ -53,7 +53,7 @@ async function main() {
   voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
   console.log({voterStructForAccount1}); // => weight: 1
 
-  console.log("Casting a vote to proposal 1 using Voter account");
+  console.log("Casting a vote to proposal 0 using Voter account");
 
   const voter = new ethers.Wallet(process.env.PRIVATE_KEY_VOTER || "", provider);
 
