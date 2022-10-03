@@ -17,7 +17,7 @@ function convertStringArrayToBytes32(array: string[]) {
 async function main() {
   const provider = ethers.getDefaultProvider("goerli");
 
-  const signer = new ethers.Wallet(process.env.PRIVATE_KEY_1 ?? "", provider);
+  const signer = new ethers.Wallet(process.env.PRIVATE_KEY_1, provider);
 
   const balanceBN = await signer.getBalance();
   const balance = Number(ethers.utils.formatEther(balanceBN));
@@ -41,45 +41,6 @@ async function main() {
   await ballotContract.deployed();
 
   console.log(`Ballot deployed to ${ballotContract.address} on Goerli`);
-
-  let voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
-  console.log({voterStructForAccount1});
-
-  console.log("Giving right to vote to address");
-  const giveRightToVoteTx = await ballotContract.giveRightToVote(process.env.VOTER_ADDRESS ?? "");
-  const giveRightToVoteTxReceipt = await giveRightToVoteTx.wait()
-  console.log({giveRightToVoteTxReceipt});
-
-  voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
-  console.log({voterStructForAccount1}); // => weight: 1
-
-  console.log("Delegate Account 0 (Chair) vote to Voter")
-  const delegateVoteTx = await ballotContract.delegate(process.env.VOTER_ADDRESS ?? "");
-  const delegateVoteTxReceipt = await delegateVoteTx.wait();
-  console.log({delegateVoteTxReceipt});
-
-  let voterStructForChair = await ballotContract.voters(process.env.CHAIR_ADDRESS ?? "");
-  console.log({voterStructForChair}); // => show delegate to Voter addreess
-
-  console.log("Cast vote to proposal 0 using Voter account including delegated votes");
-
-  const voter = new ethers.Wallet(process.env.PRIVATE_KEY_VOTER || "", provider);
-
-  const castVoteTx = await ballotContract
-    .connect(voter)
-    .vote(0);
-
-  const castVoteTxReceipt = await castVoteTx.wait();
-  console.log({castVoteTxReceipt});
-  
-  voterStructForAccount1 = await ballotContract.voters(process.env.VOTER_ADDRESS ?? "");
-  console.log({voterStructForAccount1}); // => voted: true
-  voterStructForChair = await ballotContract.voters(process.env.CHAIR_ADDRESS ?? "");
-  console.log({voterStructForChair}); // => voted: true
-
-  console.log("Show winning proosal name");
-  const winnerName = await ballotContract.winnerName();
-  console.log(`Winning proosal name: ${ethers.utils.parseBytes32String(winnerName)}`);
 }
 
 main().catch((error) => {
